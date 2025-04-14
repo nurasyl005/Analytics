@@ -32,6 +32,7 @@ An interactive data dashboard built with **Dash (Plotly)** and **PostgreSQL**, d
 > This is part of my personal portfolio to demonstrate full-stack data visualization skills using Python, Dash, and a relational database.
 
 ---
+<img width="1427" alt="Screenshot 2025-04-14 at 18 54 05" src="https://github.com/user-attachments/assets/7c70f8e6-c8fc-47e2-a1d1-1447d00dd59c" />
 
 ## 🚀 Features
 
