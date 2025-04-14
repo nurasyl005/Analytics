@@ -20,7 +20,8 @@ app.layout = html.Div([
         dcc.Dropdown(
             id='day-type',
             options=[{'label': i, 'value': i} for i in ['Weekday', 'Weekend']],
-            value='Weekday'
+            value=None,
+            placeholder="Select Day Type"
         ),
     ], style={'width': '25%', 'display': 'inline-block'}),
 
@@ -29,7 +30,8 @@ app.layout = html.Div([
         dcc.Dropdown(
             id='gender',
             options=[{'label': i, 'value': i} for i in ['Male', 'Female']],
-            value='Male'
+            value=None,
+            placeholder="Select Gender"
         ),
     ], style={'width': '25%', 'display': 'inline-block', 'marginLeft': '20px'}),
 
@@ -37,8 +39,9 @@ app.layout = html.Div([
         html.Label("Select Age Group:"),
         dcc.Dropdown(
             id='age',
-            options=[{'label': str(i), 'value': str(i)} for i in range(1, 19)],
-            value=str(10)
+            options=[{'label': str(i), 'value': str(i)} for i in range(5, 16)],
+            value=None,
+            placeholder="Select Age Group"
         ),
     ], style={'width': '25%', 'display': 'inline-block', 'marginLeft': '20px'}),
     
@@ -53,10 +56,20 @@ app.layout = html.Div([
     Input('age', 'value')
 )
 def update_chart(day_type, gender, age):
+    filters = []
+    if day_type:
+        filters.append(f"day_type = '{day_type}'")
+    if gender:
+        filters.append(f"gender = '{gender}'")
+    if age:
+        filters.append(f"age = '{age}'")
+
+    where_clause = "WHERE " + " AND ".join(filters) if filters else ""
+
     query = f"""
         SELECT age, screen_time_type, AVG(avg_screen_time) AS avg_time
         FROM screen_time
-        WHERE day_type = '{day_type}' AND gender = '{gender}' AND age = '{age}'
+        {where_clause}
         GROUP BY age, screen_time_type
     """
     df = pd.read_sql(query, engine)
@@ -66,7 +79,7 @@ def update_chart(day_type, gender, age):
         y='avg_time',
         color='screen_time_type',
         barmode='group',
-        title=f'Avg Screen Time (Age: {age}, Gender: {gender}, {day_type}s)',
+        title=f'Avg Screen Time by Filters',
         labels={'avg_time': 'Avg Hours'}
     )
     return fig
